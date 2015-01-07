@@ -1,0 +1,7 @@
+-r base.txt
+-r test.txt
+
+ipython
+ipdb
+flake8
+Sphinx
