@@ -43,12 +43,12 @@ In addition to the examples below, a working implementation can be seen in the [
 
 ### Simple report
 
-An Example of a schemaless report, for notifying a user of actions performed on a file.
+A simple report example. See tests for more examples.
 
 ```
 import io
 import tempfile
-from reporter import Report
+import reporter
 from somewhere import normalize_case
 
 report = Report('file_processor')
@@ -79,30 +79,4 @@ as_yaml = report.generate('yaml')
 # Pass `as_dict` to the request context in a web view
 # Return `as_json` to user over JSON API
 # Save `as_yaml` on bucket storage for later retrieval
-```
-
-### Report with schema
-
-TODO
-
-```
-from reporter import Report, enum_factory
-
-schema = [
-    {'id': (int, long)},
-    {'description': str},
-    {'level': enum_factory(['warning', 'error'])}
-]
-
-report = Report('validation', schema)
-```
-
-### Merging multiple reports
-
-TODO
-
-```
-from reporter import merge
-
-# metareport = merge([list_of_reports])
 ```
