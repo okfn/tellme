@@ -19,7 +19,16 @@ The code currently runs on Python 3.4 and above. Python 2.7 support is planned.
 
 See the issue tracker for current tasks.
 
-Run the tests from the repo root with:
+
+## Get started
+
+Clone into a Python 3.4 virtual environment, then:
+
+```
+pip install -r requirements/local.txt
+```
+
+Run the tests with:
 
 ```
 python -m unittest tests
