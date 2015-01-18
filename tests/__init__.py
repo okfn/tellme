@@ -28,43 +28,78 @@ class ReportTest(unittest.TestCase):
             {'id': 3, 'description': 'Third description.'}
         ]
 
-    def test_simple(self):
+    def test_simple_yaml(self):
         report = reporter.Report(self.report_name)
         report.write(self.entries[0])
         output = report.generate()
-        report.close()
         self.assertEqual(output['meta']['name'], self.report_name)
         self.assertEqual(len(output['data']), 1)
 
-    def test_with_schema_valid(self):
+    def test_simple_sql(self):
+        report = reporter.Report(self.report_name, backend='sql')
+        report.write(self.entries[0])
+        output = report.generate()
+        self.assertEqual(output['meta']['name'], self.report_name)
+        self.assertEqual(len(output['data']), 1)
+
+    def test_with_schema_valid_yaml(self):
         report = reporter.Report(self.report_name, self.report_schema)
         report.write(self.entries[0])
         report.write(self.entries[1])
         report.write(self.entries[2])
         output = report.generate()
-        report.close()
         self.assertEqual(output['meta']['name'], self.report_name)
         self.assertEqual(len(output['data']), 3)
 
-    def test_with_schema_invalid(self):
+    def test_with_schema_valid_sql(self):
+        report = reporter.Report(self.report_name, self.report_schema,
+                                 backend='sql')
+        report.write(self.entries[0])
+        report.write(self.entries[1])
+        report.write(self.entries[2])
+        output = report.generate()
+        self.assertEqual(output['meta']['name'], self.report_name)
+        self.assertEqual(len(output['data']), 3)
+
+    def test_with_schema_invalid_yaml(self):
         report = reporter.Report(self.report_name, self.report_schema)
         invalid_entry = self.entries[0]
         invalid_entry['description'] = 1
         self.assertRaises(exceptions.InvalidEntry, report.write, invalid_entry)
-        report.close()
 
-    def test_generate_json(self):
+    def test_with_schema_invalid_sql(self):
+        report = reporter.Report(self.report_name, self.report_schema,
+                                 backend='sql')
+        invalid_entry = self.entries[0]
+        invalid_entry['description'] = 1
+        self.assertRaises(exceptions.InvalidEntry, report.write, invalid_entry)
+
+
+    def test_generate_json_yaml(self):
         report = reporter.Report(self.report_name, self.report_schema)
         report.write(self.entries[0])
         output = report.generate('json')
-        report.close()
         self.assertTrue(json.loads(output))
 
-    def test_multi_write(self):
+    def test_generate_json_sql(self):
+        report = reporter.Report(self.report_name, self.report_schema,
+                                 backend='sql')
+        report.write(self.entries[0])
+        output = report.generate('json')
+        self.assertTrue(json.loads(output))
+
+    def test_multi_write_yaml(self):
         report = reporter.Report(self.report_name, self.report_schema)
         report.multi_write(self.entries)
         output = report.generate()
-        report.close()
+        self.assertEqual(output['meta']['name'], self.report_name)
+        self.assertEqual(len(output['data']), 3)
+
+    def test_multi_write_sql(self):
+        report = reporter.Report(self.report_name, self.report_schema,
+                                 backend='sql')
+        report.multi_write(self.entries)
+        output = report.generate()
         self.assertEqual(output['meta']['name'], self.report_name)
         self.assertEqual(len(output['data']), 3)
 

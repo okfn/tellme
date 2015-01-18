@@ -7,6 +7,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        'PyYAML==3.11'
+        'PyYAML>=3.11',
+        'dataset>=0.5.5'
     ]
 )

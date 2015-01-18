@@ -1,10 +1,8 @@
 # Reporter
 
-Reporter is a toolkit to create *user-facing reports* from things happening in code.
+Reporter is a toolkit to create user-facing reports.
 
-A Report instance is named, with optional schema and backend configuration.
-
-Client code writes entries to a report backend, which by default is a YAML file.
+Clients write entries to a reporting backend (with an optional schema), and generate output in a number of formats.
 
 Entries are Python dictionaries, and comply with a schema if one is supplied.
 
