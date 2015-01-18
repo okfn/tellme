@@ -1,3 +1,4 @@
+import io
 import json
 import tempfile
 import yaml
@@ -18,7 +19,6 @@ class Report(object):
                  backend='yaml', storage_path=None):
 
         self.name = name
-        # TODO: Persist `self.meta` in backend
         self.meta = {
             'name': self.name
         }
@@ -26,7 +26,6 @@ class Report(object):
         self.schema = schema
         self.backend = backend
 
-        # TODO: Replace tempfile with file on system
         if self.backend not in self.REPORT_BACKENDS:
             raise ValueError
 
@@ -122,8 +121,6 @@ class Report(object):
 
     def _validate_entry(self, entry):
         """Validate the entry against the schema."""
-
-        # TODO: Use JSON Table Schema instead of this simple custom thing :).
 
         if self.schema is None:
             return True
