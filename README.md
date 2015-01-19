@@ -1,5 +1,7 @@
 # Reporter
 
+[![Build Status](https://api.shippable.com/projects/54b903605ab6cc135288d4df/badge?branchName=master)](https://app.shippable.com/projects/54b903605ab6cc135288d4df/builds/latest)
+
 Reporter is a toolkit to create user-facing reports.
 
 Clients write entries to a reporting backend (with an optional schema), and generate output in a number of formats.
