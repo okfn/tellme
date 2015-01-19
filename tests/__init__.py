@@ -102,6 +102,3 @@ class ReportTest(unittest.TestCase):
         output = report.generate()
         self.assertEqual(output['meta']['name'], self.report_name)
         self.assertEqual(len(output['data']), 3)
-
-    def test_merge(self):
-        self.assertTrue(False)
