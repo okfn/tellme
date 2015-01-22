@@ -18,6 +18,7 @@ PACKAGE_ROOT = os.path.abspath(os.path.join(REPO_ROOT, 'reporter'))
 sys.path.insert(1, REPO_ROOT)
 import reporter
 from reporter import exceptions
+from reporter import compat
 
 
 class ReportTest(unittest.TestCase):
@@ -25,8 +26,8 @@ class ReportTest(unittest.TestCase):
     def setUp(self):
         self.report_name = 'report_test'
         self.report_schema = {
-            'id': {'type': (int, str)},
-            'description': {'type': str}
+            'id': {'type': (int, compat.str)},
+            'description': {'type': compat.str}
         }
         self.entries = [
             {'id': 1, 'description': 'First description.'},
