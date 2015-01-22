@@ -1,8 +1,14 @@
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 import io
 import json
-import tempfile
 import yaml
 import dataset
+from . import compat
 from . import encoders
 from . import exceptions
 
@@ -34,8 +40,8 @@ class Report(object):
                 self.storage = io.open(storage_path, mode='a+t',
                                        encoding='utf-8')
             else:
-                self.storage = tempfile.TemporaryFile(
-                    mode='a+t', encoding='utf-8')
+                self.storage = compat.NamedTemporaryFile(mode='a+t',
+                                                         encoding='utf-8')
             if self.backend == 'yaml':
                 # valid YAML documents should start with '---'
                 self.storage.write('---\n')
@@ -53,7 +59,7 @@ class Report(object):
         if self._validate_entry(entry):
             return getattr(self, 'write_{0}'.format(self.backend))(entry)
         else:
-            raise exceptions.InvalidEntry
+            raise exceptions.InvalidEntryError
 
     def write_yaml(self, entry):
         """Write an entry to a YAML backend."""

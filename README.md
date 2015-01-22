@@ -13,27 +13,23 @@ A Report can be generated from the backend source in several *report formats*.
 
 ## Status
 
-This package is work-in-progress.
-
-The code currently runs on Python 3.4 and above. Python 2.7 support is planned.
-
-See the issue tracker for current tasks.
-
+Work in progress. It works. Tests pass on Python 2.7, 3.3 and 3.4.
 
 ## Get started
 
-Clone into a Python 3.4 virtual environment, then:
+Clone into a virtual environment, then:
 
 ```
 pip install -r requirements/local.txt
 ```
 
-Run the tests with:
+Run the tests with a coverage report:
 
 ```
-python -m unittest tests
+./tests.sh
 ```
 
+Check coverage and build status on the supported runtimes [here](https://app.shippable.com/projects/54b903605ab6cc135288d4df).
 
 ## Examples
 
