@@ -12,13 +12,13 @@ import json
 
 TEST_ROOT = os.path.abspath(os.path.dirname(__file__))
 REPO_ROOT = os.path.abspath(os.path.dirname(TEST_ROOT))
-PACKAGE_ROOT = os.path.abspath(os.path.join(REPO_ROOT, 'reporter'))
+PACKAGE_ROOT = os.path.abspath(os.path.join(REPO_ROOT, 'tellme'))
 
 
 sys.path.insert(1, REPO_ROOT)
-import reporter
-from reporter import exceptions
-from reporter import compat
+import tellme
+from tellme import exceptions
+from tellme import compat
 
 
 class ReportTest(unittest.TestCase):
@@ -36,21 +36,21 @@ class ReportTest(unittest.TestCase):
         ]
 
     def test_simple_yaml(self):
-        report = reporter.Report(self.report_name)
+        report = tellme.Report(self.report_name)
         report.write(self.entries[0])
         output = report.generate()
         self.assertEqual(output['meta']['name'], self.report_name)
         self.assertEqual(len(output['data']), 1)
 
     def test_simple_sql(self):
-        report = reporter.Report(self.report_name, backend='sql')
+        report = tellme.Report(self.report_name, backend='sql')
         report.write(self.entries[0])
         output = report.generate()
         self.assertEqual(output['meta']['name'], self.report_name)
         self.assertEqual(len(output['data']), 1)
 
     def test_with_schema_valid_yaml(self):
-        report = reporter.Report(self.report_name, self.report_schema)
+        report = tellme.Report(self.report_name, self.report_schema)
         report.write(self.entries[0])
         report.write(self.entries[1])
         report.write(self.entries[2])
@@ -59,8 +59,8 @@ class ReportTest(unittest.TestCase):
         self.assertEqual(len(output['data']), 3)
 
     def test_with_schema_valid_sql(self):
-        report = reporter.Report(self.report_name, self.report_schema,
-                                 backend='sql')
+        report = tellme.Report(self.report_name, self.report_schema,
+                               backend='sql')
         report.write(self.entries[0])
         report.write(self.entries[1])
         report.write(self.entries[2])
@@ -69,43 +69,43 @@ class ReportTest(unittest.TestCase):
         self.assertEqual(len(output['data']), 3)
 
     def test_with_schema_invalid_yaml(self):
-        report = reporter.Report(self.report_name, self.report_schema)
+        report = tellme.Report(self.report_name, self.report_schema)
         invalid_entry = self.entries[0]
         invalid_entry['description'] = 1
         self.assertRaises(exceptions.InvalidEntryError, report.write,
                           invalid_entry)
 
     def test_with_schema_invalid_sql(self):
-        report = reporter.Report(self.report_name, self.report_schema,
-                                 backend='sql')
+        report = tellme.Report(self.report_name, self.report_schema,
+                               backend='sql')
         invalid_entry = self.entries[0]
         invalid_entry['description'] = 1
         self.assertRaises(exceptions.InvalidEntryError, report.write,
                           invalid_entry)
 
     def test_generate_json_yaml(self):
-        report = reporter.Report(self.report_name, self.report_schema)
+        report = tellme.Report(self.report_name, self.report_schema)
         report.write(self.entries[0])
         output = report.generate('json')
         self.assertTrue(json.loads(output))
 
     def test_generate_json_sql(self):
-        report = reporter.Report(self.report_name, self.report_schema,
-                                 backend='sql')
+        report = tellme.Report(self.report_name, self.report_schema,
+                               backend='sql')
         report.write(self.entries[0])
         output = report.generate('json')
         self.assertTrue(json.loads(output))
 
     def test_multi_write_yaml(self):
-        report = reporter.Report(self.report_name, self.report_schema)
+        report = tellme.Report(self.report_name, self.report_schema)
         report.multi_write(self.entries)
         output = report.generate()
         self.assertEqual(output['meta']['name'], self.report_name)
         self.assertEqual(len(output['data']), 3)
 
     def test_multi_write_sql(self):
-        report = reporter.Report(self.report_name, self.report_schema,
-                                 backend='sql')
+        report = tellme.Report(self.report_name, self.report_schema,
+                               backend='sql')
         report.multi_write(self.entries)
         output = report.generate()
         self.assertEqual(output['meta']['name'], self.report_name)

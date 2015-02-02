@@ -5,6 +5,8 @@
 *.sublime-project
 *.sublime-workspace
 __pycache__/
+/dist/
+/*.egg-info
 *.py[cod]
 .coverage
 shippable/*

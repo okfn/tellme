@@ -13,7 +13,7 @@ before_script:
   - mkdir -p shippable/codecoverage
 
 script:
-  - PYTHONPATH=. py.test --cov reporter --cov-config .coveragerc --cov-report xml --junitxml=shippable/testresults/tests.xml
+  - PYTHONPATH=. py.test --cov tellme --cov-config .coveragerc --cov-report xml --junitxml=shippable/testresults/tests.xml
 
 notifications:
   email:
