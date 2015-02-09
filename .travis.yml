@@ -3,11 +3,14 @@ python:
   - 2.7
   - 3.3
   - 3.4
+
 install:
-  - pip install -r requirements/test.txt --use-mirrors
+  - pip install -r requirements/test.txt
   - pip install coveralls
+
 script:
   - py.test --cov tellme --cov-config .coveragerc --cov-report term-missing
+
 after_success:
   - coveralls
 
