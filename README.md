@@ -1,6 +1,5 @@
 # Reporter
 
-[![Build Status](https://api.shippable.com/projects/54b903605ab6cc135288d4df/badge?branchName=master)](https://app.shippable.com/projects/54b903605ab6cc135288d4df/builds/latest)
 [![Travis Build Status](https://travis-ci.org/okfn/tellme.svg)](https://travis-ci.org/okfn/tellme)
 [![Coverage Status](https://coveralls.io/repos/okfn/tellme/badge.svg)](https://coveralls.io/r/okfn/tellme)
 
