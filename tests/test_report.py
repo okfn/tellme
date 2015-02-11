@@ -40,14 +40,14 @@ class ReportTest(unittest.TestCase):
         report.write(self.entries[0])
         output = report.generate()
         self.assertEqual(output['meta']['name'], self.report_name)
-        self.assertEqual(len(output['data']), 1)
+        self.assertEqual(len(output['results']), 1)
 
     def test_simple_sql(self):
         report = tellme.Report(self.report_name, backend='sql')
         report.write(self.entries[0])
         output = report.generate()
         self.assertEqual(output['meta']['name'], self.report_name)
-        self.assertEqual(len(output['data']), 1)
+        self.assertEqual(len(output['results']), 1)
 
     def test_with_schema_valid_yaml(self):
         report = tellme.Report(self.report_name, self.report_schema)
@@ -56,7 +56,7 @@ class ReportTest(unittest.TestCase):
         report.write(self.entries[2])
         output = report.generate()
         self.assertEqual(output['meta']['name'], self.report_name)
-        self.assertEqual(len(output['data']), 3)
+        self.assertEqual(len(output['results']), 3)
 
     def test_with_schema_valid_sql(self):
         report = tellme.Report(self.report_name, self.report_schema,
@@ -66,7 +66,7 @@ class ReportTest(unittest.TestCase):
         report.write(self.entries[2])
         output = report.generate()
         self.assertEqual(output['meta']['name'], self.report_name)
-        self.assertEqual(len(output['data']), 3)
+        self.assertEqual(len(output['results']), 3)
 
     def test_with_schema_invalid_yaml(self):
         report = tellme.Report(self.report_name, self.report_schema)
@@ -101,7 +101,7 @@ class ReportTest(unittest.TestCase):
         report.multi_write(self.entries)
         output = report.generate()
         self.assertEqual(output['meta']['name'], self.report_name)
-        self.assertEqual(len(output['data']), 3)
+        self.assertEqual(len(output['results']), 3)
 
     def test_multi_write_sql(self):
         report = tellme.Report(self.report_name, self.report_schema,
@@ -109,4 +109,4 @@ class ReportTest(unittest.TestCase):
         report.multi_write(self.entries)
         output = report.generate()
         self.assertEqual(output['meta']['name'], self.report_name)
-        self.assertEqual(len(output['data']), 3)
+        self.assertEqual(len(output['results']), 3)
