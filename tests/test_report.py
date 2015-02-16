@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import os
 import sys
+import io
 import unittest
 import json
 
@@ -49,6 +50,15 @@ class ReportTest(unittest.TestCase):
         self.assertEqual(output['meta']['name'], self.report_name)
         self.assertEqual(len(output['results']), 1)
 
+    def test_simple_client(self):
+        stream = io.TextIOWrapper(io.BufferedRandom(io.BytesIO()))
+        report = tellme.Report(self.report_name, backend='client',
+                               client_stream=stream)
+        report.write(self.entries[0])
+        output = report.generate()
+        self.assertEqual(output['meta']['name'], self.report_name)
+        self.assertEqual(len(output['results']), 1)
+
     def test_with_schema_valid_yaml(self):
         report = tellme.Report(self.report_name, self.report_schema)
         report.write(self.entries[0])
@@ -61,6 +71,17 @@ class ReportTest(unittest.TestCase):
     def test_with_schema_valid_sql(self):
         report = tellme.Report(self.report_name, self.report_schema,
                                backend='sql')
+        report.write(self.entries[0])
+        report.write(self.entries[1])
+        report.write(self.entries[2])
+        output = report.generate()
+        self.assertEqual(output['meta']['name'], self.report_name)
+        self.assertEqual(len(output['results']), 3)
+
+    def test_with_schema_valid_client(self):
+        stream = io.TextIOWrapper(io.BufferedRandom(io.BytesIO()))
+        report = tellme.Report(self.report_name, self.report_schema,
+                               backend='client', client_stream=stream)
         report.write(self.entries[0])
         report.write(self.entries[1])
         report.write(self.entries[2])
@@ -83,6 +104,15 @@ class ReportTest(unittest.TestCase):
         self.assertRaises(exceptions.InvalidEntryError, report.write,
                           invalid_entry)
 
+    def test_with_schema_invalid_client(self):
+        stream = io.TextIOWrapper(io.BufferedRandom(io.BytesIO()))
+        report = tellme.Report(self.report_name, self.report_schema,
+                               backend='client', client_stream=stream)
+        invalid_entry = self.entries[0]
+        invalid_entry['description'] = 1
+        self.assertRaises(exceptions.InvalidEntryError, report.write,
+                          invalid_entry)
+
     def test_generate_json_yaml(self):
         report = tellme.Report(self.report_name, self.report_schema)
         report.write(self.entries[0])
@@ -92,6 +122,14 @@ class ReportTest(unittest.TestCase):
     def test_generate_json_sql(self):
         report = tellme.Report(self.report_name, self.report_schema,
                                backend='sql')
+        report.write(self.entries[0])
+        output = report.generate('json')
+        self.assertTrue(json.loads(output))
+
+    def test_generate_json_client(self):
+        stream = io.TextIOWrapper(io.BufferedRandom(io.BytesIO()))
+        report = tellme.Report(self.report_name, self.report_schema,
+                               backend='client', client_stream=stream)
         report.write(self.entries[0])
         output = report.generate('json')
         self.assertTrue(json.loads(output))
@@ -106,6 +144,15 @@ class ReportTest(unittest.TestCase):
     def test_multi_write_sql(self):
         report = tellme.Report(self.report_name, self.report_schema,
                                backend='sql')
+        report.multi_write(self.entries)
+        output = report.generate()
+        self.assertEqual(output['meta']['name'], self.report_name)
+        self.assertEqual(len(output['results']), 3)
+
+    def test_multi_write_client(self):
+        stream = io.TextIOWrapper(io.BufferedRandom(io.BytesIO()))
+        report = tellme.Report(self.report_name, self.report_schema,
+                               backend='client', client_stream=stream)
         report.multi_write(self.entries)
         output = report.generate()
         self.assertEqual(output['meta']['name'], self.report_name)
