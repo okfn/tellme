@@ -1,15 +1,15 @@
-# Reporter
+# TellMe
 
 [![Travis Build Status](https://travis-ci.org/okfn/tellme.svg)](https://travis-ci.org/okfn/tellme)
 [![Coverage Status](https://coveralls.io/repos/okfn/tellme/badge.svg)](https://coveralls.io/r/okfn/tellme)
 
-Reporter is a toolkit to create user-facing reports.
+TellMe is a toolkit to create user-facing reports.
 
 Clients write entries to a reporting backend (with an optional schema), and generate output in a number of formats.
 
 Entries are Python dictionaries, and comply with a schema if one is supplied.
 
-A Report can be generated from the backend source in several *report formats*.
+A report can be generated from the backend source in several *report formats*.
 
 
 ## Status
@@ -34,7 +34,7 @@ Check coverage and build status on the supported runtimes [here](https://app.shi
 
 ## Examples
 
-Reporter is used in and developed against [Tabular Validator](https://github.com/okfn/tabular-validator).
+TellMe is used in and developed against [Tabular Validator](https://github.com/okfn/tabular-validator).
 
 In addition to the examples below, a working implementation can be seen in the [validators](https://github.com/okfn/tabular-validator/tabular_validator/validators/) package.
 
@@ -45,10 +45,10 @@ A simple report example. See tests for more examples.
 ```
 import io
 import tempfile
-import reporter
+import tellme
 from somewhere import normalize_case
 
-report = Report('file_processor')
+report = tellme.Report('file_processor')
 
 def clean_data(stream):
     cleaned = tempfile.TemporaryFile()
