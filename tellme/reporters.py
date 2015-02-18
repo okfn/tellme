@@ -75,8 +75,8 @@ class Report(object):
         """Write an entry to the report."""
         if not self.full():
             if self._validate_entry(entry):
-                return getattr(self, 'write_{0}'.format(self.backend))(entry)
                 self.count += 1
+                return getattr(self, 'write_{0}'.format(self.backend))(entry)
             else:
                 raise exceptions.InvalidEntryError
 
