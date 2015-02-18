@@ -21,7 +21,7 @@ class Report(object):
     REPORT_BACKENDS = ('sql', 'yaml', 'client')
     FILE_BACKENDS = ('yaml',)
 
-    def __init__(self, name='report', schema=None, template=None,
+    def __init__(self, name='report', schema=None, limit=None, template=None,
                  backend='yaml', storage_path=None, client_stream=None):
 
         self.name = name
@@ -30,6 +30,8 @@ class Report(object):
         }
         self.template = template
         self.schema = schema
+        self.limit = limit
+        self.count = 0
         self.backend = backend
 
         if self.backend not in self.REPORT_BACKENDS:
@@ -61,12 +63,22 @@ class Report(object):
         else:
             raise NotImplementedError
 
+    def full(self):
+        """Return boolean if report is full (max. entries)."""
+
+        if self.limit is None:
+            return False
+
+        return (self.count >= self.limit)
+
     def write(self, entry):
         """Write an entry to the report."""
-        if self._validate_entry(entry):
-            return getattr(self, 'write_{0}'.format(self.backend))(entry)
-        else:
-            raise exceptions.InvalidEntryError
+        if not self.full():
+            if self._validate_entry(entry):
+                return getattr(self, 'write_{0}'.format(self.backend))(entry)
+                self.count += 1
+            else:
+                raise exceptions.InvalidEntryError
 
     def write_yaml(self, entry):
         """Write an entry to a YAML backend."""
