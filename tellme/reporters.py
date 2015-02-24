@@ -142,7 +142,7 @@ class Report(object):
         """Generate a report as a Python dictionary."""
         return {
             'meta': self.meta,
-            'results': self.read() or {}
+            'results': self.read() or []
         }
 
     def generate_json(self):
