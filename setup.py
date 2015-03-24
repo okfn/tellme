@@ -9,7 +9,8 @@ from setuptools import setup, find_packages
 
 dependencies = [
     'PyYAML>=3.11',
-    'dataset>=0.5.5'
+    'dataset>=0.5.5',
+    'tabulate>=0.7.4'
 ]
 
 # with io.open('README.md', mode='r+t', encoding='utf-8') as stream:
@@ -19,7 +20,7 @@ setup(
     name='tellme',
     description='A toolkit for generating user-facing reports from things happening in code.',
     long_description='A toolkit for generating user-facing reports from things happening in code.',
-    version='0.1.6',
+    version='0.1.7',
     author='Open Knowledge Foundation',
     author_email='info@okfn.org',
     url='http://okfn.org',

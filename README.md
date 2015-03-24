@@ -30,13 +30,11 @@ Run the tests with a coverage report:
 ./tests.sh
 ```
 
-Check coverage and build status on the supported runtimes [here](https://app.shippable.com/projects/54b903605ab6cc135288d4df).
-
 ## Examples
 
-TellMe is used in and developed against [Tabular Validator](https://github.com/okfn/tabular-validator).
+TellMe is used in and developed against [Good Tables](https://github.com/okfn/goodtables).
 
-In addition to the examples below, a working implementation can be seen in the [validators](https://github.com/okfn/tabular-validator/tabular_validator/validators/) package.
+In addition to the examples below, a working implementation can be seen in the [processors](https://github.com/okfn/goodtables/goodtables/processors/) package.
 
 ### Simple report
 

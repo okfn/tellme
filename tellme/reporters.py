@@ -8,6 +8,7 @@ import io
 import json
 import yaml
 import dataset
+import tabulate
 from . import compat
 from . import encoders
 from . import exceptions
@@ -17,7 +18,7 @@ class Report(object):
 
     """Create, manage and output informational reports from Python."""
 
-    REPORT_FORMATS = ('dict', 'json', 'yaml', 'csv', 'html')
+    REPORT_FORMATS = ('dict', 'json', 'yaml', 'csv', 'html', 'terminal')
     REPORT_BACKENDS = ('sql', 'yaml', 'client')
     FILE_BACKENDS = ('yaml',)
 
@@ -144,6 +145,18 @@ class Report(object):
             'meta': self.meta,
             'results': self.read() or []
         }
+
+    def generate_terminal(self):
+        """Generate a report as an ASCII table."""
+        _headers = 'keys'
+        _tablefmt = 'grid'
+        _report = self.generate_dict()
+        _meta = []
+        for k, v in _report['meta'].items():
+            _meta.append('{0}: {1}'.format(k, v))
+        meta ='\n'.join(_meta)
+        results = tabulate.tabulate(_report['results'], headers=_headers, tablefmt=_tablefmt)
+        return meta, results
 
     def generate_json(self):
         """Generate a report as JSON."""
