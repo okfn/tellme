@@ -137,26 +137,23 @@ class ReportTest(unittest.TestCase):
     def test_generate_terminal_yaml(self):
         report = tellme.Report(self.report_name, self.report_schema)
         report.write(self.entries[0])
-        meta, results = report.generate('terminal')
-        self.assertTrue(meta)
-        self.assertTrue(results)
+        output = report.generate('terminal')
+        self.assertTrue(output)
 
     def test_generate_terminal_sql(self):
         report = tellme.Report(self.report_name, self.report_schema,
                                backend='sql')
         report.write(self.entries[0])
-        meta, results = report.generate('terminal')
-        self.assertTrue(meta)
-        self.assertTrue(results)
+        output = report.generate('terminal')
+        self.assertTrue(output)
 
     def test_generate_terminal_client(self):
         stream = io.TextIOWrapper(io.BufferedRandom(io.BytesIO()))
         report = tellme.Report(self.report_name, self.report_schema,
                                backend='client', client_stream=stream)
         report.write(self.entries[0])
-        meta, results = report.generate('terminal')
-        self.assertTrue(meta)
-        self.assertTrue(results)
+        output = report.generate('terminal')
+        self.assertTrue(output)
 
     def test_multi_write_yaml(self):
         report = tellme.Report(self.report_name, self.report_schema)

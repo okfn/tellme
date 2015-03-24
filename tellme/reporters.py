@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import io
 import json
+import textwrap
 import yaml
 import dataset
 import tabulate
@@ -152,11 +153,22 @@ class Report(object):
         _tablefmt = 'grid'
         _report = self.generate_dict()
         _meta = []
+        _template = textwrap.dedent("""\
+        REPORT
+        ------
+        Meta.
+        {0}
+
+        Results.
+        {1}
+
+        """)
         for k, v in _report['meta'].items():
-            _meta.append('{0}: {1}'.format(k, v))
+            _meta.append('{0}: {1}'.format(k.title(), v))
         meta ='\n'.join(_meta)
         results = tabulate.tabulate(_report['results'], headers=_headers, tablefmt=_tablefmt)
-        return meta, results
+
+        return _template.format(meta, results)
 
     def generate_json(self):
         """Generate a report as JSON."""
