@@ -21,12 +21,14 @@ Work in progress. It works. Tests pass on Python 2.7, 3.3 and 3.4.
 Clone into a virtual environment, then:
 
 ```
-pip install -r requirements/local.txt
+pip install -r requirements/base.txt
 ```
 
 Run the tests with a coverage report:
 
 ```
+pip install -r requirements/test.txt
+
 ./tests.sh
 ```
 
