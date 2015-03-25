@@ -186,7 +186,7 @@ class Report(object):
 
         _headers = 'keys'
         _tablefmt = 'grid'
-        _report = self.generate_dict()
+        _report = self.generate_dict(only=only, exclude=exclude)
         _meta = []
         _template = textwrap.dedent("""\
         Meta.
