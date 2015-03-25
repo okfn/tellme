@@ -107,7 +107,7 @@ class Report(object):
     def read_yaml(self, only=None, exclude=None):
         """Read all data from a YAML backend."""
         self.storage.seek(0)
-        _results =  yaml.load(self.storage.read())
+        _results =  yaml.load(self.storage.read()) or []
         if only:
             return [{k: v for k, v in r.items() if k in only} for r in _results]
         if exclude:
@@ -189,12 +189,12 @@ class Report(object):
         _report = self.generate_dict(only=only, exclude=exclude)
         _meta = []
         _template = textwrap.dedent("""\
-        Meta.
+        META.
         {0}
 
         ###
 
-        Results.
+        RESULTS.
         {1}
         """)
         for k, v in _report['meta'].items():

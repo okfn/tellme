@@ -20,7 +20,7 @@ setup(
     name='tellme',
     description='A toolkit for generating user-facing reports from things happening in code.',
     long_description='A toolkit for generating user-facing reports from things happening in code.',
-    version='0.2.1',
+    version='0.2.2',
     author='Open Knowledge Foundation',
     author_email='info@okfn.org',
     url='http://okfn.org',
