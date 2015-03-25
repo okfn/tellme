@@ -134,25 +134,25 @@ class ReportTest(unittest.TestCase):
         output = report.generate('json')
         self.assertTrue(json.loads(output))
 
-    def test_generate_terminal_yaml(self):
+    def test_generate_txt_yaml(self):
         report = tellme.Report(self.report_name, self.report_schema)
         report.write(self.entries[0])
-        output = report.generate('terminal')
+        output = report.generate('txt')
         self.assertTrue(output)
 
-    def test_generate_terminal_sql(self):
+    def test_generate_txt_sql(self):
         report = tellme.Report(self.report_name, self.report_schema,
                                backend='sql')
         report.write(self.entries[0])
-        output = report.generate('terminal')
+        output = report.generate('txt')
         self.assertTrue(output)
 
-    def test_generate_terminal_client(self):
+    def test_generate_txt_client(self):
         stream = io.TextIOWrapper(io.BufferedRandom(io.BytesIO()))
         report = tellme.Report(self.report_name, self.report_schema,
                                backend='client', client_stream=stream)
         report.write(self.entries[0])
-        output = report.generate('terminal')
+        output = report.generate('txt')
         self.assertTrue(output)
 
     def test_multi_write_yaml(self):

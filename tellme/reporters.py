@@ -19,7 +19,7 @@ class Report(object):
 
     """Create, manage and output informational reports from Python."""
 
-    REPORT_FORMATS = ('dict', 'json', 'yaml', 'csv', 'html', 'terminal')
+    REPORT_FORMATS = ('dict', 'json', 'yaml', 'csv', 'html', 'txt')
     REPORT_BACKENDS = ('sql', 'yaml', 'client')
     FILE_BACKENDS = ('yaml',)
 
@@ -130,8 +130,8 @@ class Report(object):
         """Close backend file."""
         return self.storage.close()
 
-    def generate(self, format='dict'):
-        """Generate a report for this validator."""
+    def generate(self, format='dict', exclude=None):
+        """Generate a report."""
 
         if format not in self.REPORT_FORMATS:
             raise ValueError
@@ -140,28 +140,29 @@ class Report(object):
             self.close()
             return rv
 
-    def generate_dict(self):
+    def generate_dict(self, exclude_fields=None):
         """Generate a report as a Python dictionary."""
+
         return {
             'meta': self.meta,
             'results': self.read() or []
         }
 
-    def generate_terminal(self):
-        """Generate a report as an ASCII table."""
+    def generate_txt(self):
+        """Generate a report as plain text, using an ASCII table for data."""
+
         _headers = 'keys'
         _tablefmt = 'grid'
         _report = self.generate_dict()
         _meta = []
         _template = textwrap.dedent("""\
-        REPORT
-        ------
         Meta.
         {0}
 
+        ###
+
         Results.
         {1}
-
         """)
         for k, v in _report['meta'].items():
             _meta.append('{0}: {1}'.format(k.title(), v))
