@@ -101,25 +101,43 @@ class Report(object):
             self.write(entry)
         return True
 
-    def read(self):
-        return getattr(self, 'read_{0}'.format(self.backend))()
+    def read(self, only=None, exclude=None):
+        return getattr(self, 'read_{0}'.format(self.backend))(only=only, exclude=exclude)
 
-    def read_yaml(self):
+    def read_yaml(self, only=None, exclude=None):
         """Read all data from a YAML backend."""
         self.storage.seek(0)
-        return yaml.load(self.storage.read())
+        _results =  yaml.load(self.storage.read())
+        if only:
+            return [{k: v for k, v in r.items() if k in only} for r in _results]
+        if exclude:
+            return [{k: v for k, v in r.items() if not k in exclude} for r in _results]
+        else:
+            return _results
 
-    def read_sql(self):
+    def read_sql(self, only=None, exclude=None):
         """Read all data from an SQLite backend."""
-        return [result for result in self.storage.all()]
+        _results = [result for result in self.storage.all()]
+        if only:
+            return [{k: v for k, v in r.items() if k in only} for r in _results]
+        if exclude:
+            return [{k: v for k, v in r.items() if not k in exclude} for r in _results]
+        else:
+            return _results
 
-    def read_client(self):
+    def read_client(self, only=None, exclude=None):
         """Read all data from a client backend."""
-        lines = []
+        _results = []
         self.storage.seek(0)
         for line in self.storage:
-            lines.append(json.loads(line.rstrip('\n')))
-        return lines
+            if only:
+                _results.append({k: v for k, v in json.loads(line.rstrip('\n')) if k in only})
+            if exclude:
+                _results.append({k: v for k, v in json.loads(line.rstrip('\n')) if not k in exclude})
+            else:
+                _results.append(json.loads(line.rstrip('\n')))
+
+        return _results
 
     def close(self):
         """Close the backend storage."""
@@ -130,25 +148,40 @@ class Report(object):
         """Close backend file."""
         return self.storage.close()
 
-    def generate(self, format='dict', exclude=None):
-        """Generate a report."""
+    def generate(self, format='dict', only=None, exclude=None):
+        """Generate a report.
+
+        Args:
+            only (list or tuple): An iterable of field names to filter data out of result objects.
+            exclude (list or tuple): An iterable of field names to filter data out of result objects.
+
+            `only` and `exclude` cannot be passed together - doing so will
+            raise an exception.
+
+        """
 
         if format not in self.REPORT_FORMATS:
             raise ValueError
+        elif only and exclude:
+            raise ValueError
+        elif only is not None and not isinstance(only, (list, tuple, set)):
+            raise ValueError
+        elif exclude is not None and not isinstance(exclude, (list, tuple, set)):
+            raise ValueError
         else:
-            rv = getattr(self, 'generate_{0}'.format(format))()
+            rv = getattr(self, 'generate_{0}'.format(format))(only=only, exclude=exclude)
             self.close()
             return rv
 
-    def generate_dict(self, exclude_fields=None):
+    def generate_dict(self, only=None, exclude=None):
         """Generate a report as a Python dictionary."""
 
         return {
             'meta': self.meta,
-            'results': self.read() or []
+            'results': self.read(only=only, exclude=exclude) or []
         }
 
-    def generate_txt(self):
+    def generate_txt(self, only=None, exclude=None):
         """Generate a report as plain text, using an ASCII table for data."""
 
         _headers = 'keys'
@@ -171,15 +204,15 @@ class Report(object):
 
         return _template.format(meta, results)
 
-    def generate_json(self):
+    def generate_json(self, only=None, exclude=None):
         """Generate a report as JSON."""
         return json.dumps(self.generate_dict(), cls=encoders.ReportJSONEncoder)
 
-    def generate_csv(self):
+    def generate_csv(self, only=None, exclude=None):
         """Generate a report as CSV."""
         raise NotImplementedError
 
-    def generate_html(self):
+    def generate_html(self, only=None, exclude=None):
         """Generate a report as HTML."""
         raise NotImplementedError
 

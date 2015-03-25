@@ -155,6 +155,20 @@ class ReportTest(unittest.TestCase):
         output = report.generate('txt')
         self.assertTrue(output)
 
+    def test_generate_only(self):
+        report = tellme.Report(self.report_name, self.report_schema,
+                               backend='yaml')
+        report.write(self.entries[0])
+        output = report.generate('dict', only=('id',))
+        self.assertEqual(list(output['results'][0].keys()), ['id'])
+
+    def test_generate_exclude(self):
+        report = tellme.Report(self.report_name, self.report_schema,
+                               backend='yaml')
+        report.write(self.entries[0])
+        output = report.generate('dict', exclude=('id',))
+        self.assertEqual(list(output['results'][0].keys()), ['description'])
+
     def test_multi_write_yaml(self):
         report = tellme.Report(self.report_name, self.report_schema)
         report.multi_write(self.entries)
