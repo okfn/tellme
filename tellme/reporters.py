@@ -200,8 +200,10 @@ class Report(object):
         for k, v in _report['meta'].items():
             _meta.append('{0}: {1}'.format(k.title(), v))
         meta ='\n'.join(_meta)
-        results = tabulate.tabulate(_report['results'], headers=_headers, tablefmt=_tablefmt)
-
+        if _report['results']:
+            results = tabulate.tabulate(_report['results'], headers=_headers, tablefmt=_tablefmt)
+        else:
+            results = 'No results were generated.'
         return _template.format(meta, results)
 
     def generate_json(self, only=None, exclude=None):
