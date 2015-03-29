@@ -204,3 +204,16 @@ class ReportTest(unittest.TestCase):
         output = report.generate()
         self.assertEqual(output['meta']['name'], self.report_name)
         self.assertEqual(len(output['results']), 3)
+
+    def test_pregenerate_task(self):
+
+        msg = 'Say Hi!'
+
+        def say_hi(report):
+            report['meta']['greeting'] = msg
+            return report
+
+        report = tellme.Report(self.report_name, self.report_schema,
+                               backend='yaml', post_task=say_hi)
+        output = report.generate('dict', exclude=('id',))
+        self.assertEqual(output['meta']['greeting'], msg)

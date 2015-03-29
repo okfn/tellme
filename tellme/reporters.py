@@ -24,7 +24,8 @@ class Report(object):
     FILE_BACKENDS = ('yaml',)
 
     def __init__(self, name='report', schema=None, limit=None, template=None,
-                 backend='yaml', storage_path=None, client_stream=None):
+                 backend='yaml', storage_path=None, client_stream=None,
+                 post_task=None):
 
         self.name = name
         self.meta = {
@@ -34,6 +35,7 @@ class Report(object):
         self.schema = schema
         self.limit = limit
         self.count = 0
+        self.post_task = post_task
         self.backend = backend
 
         if self.backend not in self.REPORT_BACKENDS:
@@ -171,6 +173,10 @@ class Report(object):
         else:
             rv = getattr(self, 'generate_{0}'.format(format))(only=only, exclude=exclude)
             self.close()
+
+            if self.post_task:
+                self.post_task(rv)
+
             return rv
 
     def generate_dict(self, only=None, exclude=None):
