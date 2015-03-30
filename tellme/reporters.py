@@ -36,7 +36,7 @@ class Report(object):
         self.limit = limit
         self.count = 0
         self.post_task = post_task
-        self._mutable_report = None
+        self._mutable = None
         self.backend = backend
         if self.backend not in self.REPORT_BACKENDS:
             raise ValueError
@@ -66,6 +66,17 @@ class Report(object):
 
         else:
             raise NotImplementedError
+
+    def mutable_report(self, only=None, exclude=None):
+
+        if only:
+            self._mutable['results'] = [{k: v for k, v in r.items() if k in only}
+                                        for r in self._mutable['results']]
+        elif exclude:
+            self._mutable['results'] = [{k: v for k, v in r.items() if not k in exclude}
+                                        for r in self._mutable['results']]
+
+        return self._mutable
 
     def full(self):
         """Return boolean if report is full (max. entries)."""
@@ -180,21 +191,21 @@ class Report(object):
         if exclude is not None and not isinstance(exclude, (list, tuple, set)):
             raise ValueError
 
-        self._mutable_report = {
+        self._mutable = {
             'meta': self.meta,
-            'results': self.read(only=only, exclude=exclude) or []
+            'results': self.read() or []
         }
         self.close()
 
         if self.post_task:
-            self.post_task(self._mutable_report)
+            self.post_task(self._mutable)
 
         handler = getattr(self, 'generate_{0}'.format(output))
         return handler(only=only, exclude=exclude)
 
     def generate_dict(self, only=None, exclude=None):
         """Generate a report as a Python dictionary."""
-        return self._mutable_report
+        return self.mutable_report(only=only, exclude=exclude)
 
     def generate_txt(self, only=None, exclude=None):
         """Generate a report as plain text, using an ASCII table for data."""
@@ -223,7 +234,7 @@ class Report(object):
 
     def generate_json(self, only=None, exclude=None):
         """Generate a report as JSON."""
-        return json.dumps(self.generate_dict(), cls=encoders.ReportJSONEncoder)
+        return json.dumps(self.generate_dict(only=only, exclude=exclude), cls=encoders.ReportJSONEncoder)
 
     def generate_csv(self, only=None, exclude=None):
         """Generate a report as CSV."""
