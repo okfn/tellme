@@ -36,8 +36,8 @@ class Report(object):
         self.limit = limit
         self.count = 0
         self.post_task = post_task
+        self._mutable_report = None
         self.backend = backend
-
         if self.backend not in self.REPORT_BACKENDS:
             raise ValueError
 
@@ -108,27 +108,31 @@ class Report(object):
 
     def read_yaml(self, only=None, exclude=None):
         """Read all data from a YAML backend."""
+
         self.storage.seek(0)
-        _results =  yaml.load(self.storage.read()) or []
+        _results = yaml.load(self.storage.read()) or []
         if only:
-            return [{k: v for k, v in r.items() if k in only} for r in _results]
-        if exclude:
-            return [{k: v for k, v in r.items() if not k in exclude} for r in _results]
-        else:
-            return _results
+            _results = [{k: v for k, v in r.items() if k in only} for r in _results]
+        elif exclude:
+            _results = [{k: v for k, v in r.items() if not k in exclude} for r in _results]
+
+        self.storage.seek(0)
+        return _results
 
     def read_sql(self, only=None, exclude=None):
         """Read all data from an SQLite backend."""
+
         _results = [result for result in self.storage.all()]
         if only:
-            return [{k: v for k, v in r.items() if k in only} for r in _results]
-        if exclude:
-            return [{k: v for k, v in r.items() if not k in exclude} for r in _results]
-        else:
-            return _results
+            _results = [{k: v for k, v in r.items() if k in only} for r in _results]
+        elif exclude:
+            _results = [{k: v for k, v in r.items() if not k in exclude} for r in _results]
+
+        return _results
 
     def read_client(self, only=None, exclude=None):
         """Read all data from a client backend."""
+
         _results = []
         self.storage.seek(0)
         for line in self.storage:
@@ -139,6 +143,7 @@ class Report(object):
             else:
                 _results.append(json.loads(line.rstrip('\n')))
 
+        self.storage.seek(0)
         return _results
 
     def close(self):
@@ -150,7 +155,8 @@ class Report(object):
         """Close backend file."""
         return self.storage.close()
 
-    def generate(self, format='dict', only=None, exclude=None):
+    def generate(self, output='dict', only=None, exclude=None):
+
         """Generate a report.
 
         Args:
@@ -162,30 +168,33 @@ class Report(object):
 
         """
 
-        if format not in self.REPORT_FORMATS:
+        if output not in self.REPORT_FORMATS:
             raise ValueError
-        elif only and exclude:
+
+        if only and exclude:
             raise ValueError
-        elif only is not None and not isinstance(only, (list, tuple, set)):
+
+        if only is not None and not isinstance(only, (list, tuple, set)):
             raise ValueError
-        elif exclude is not None and not isinstance(exclude, (list, tuple, set)):
+
+        if exclude is not None and not isinstance(exclude, (list, tuple, set)):
             raise ValueError
-        else:
-            rv = getattr(self, 'generate_{0}'.format(format))(only=only, exclude=exclude)
-            self.close()
 
-            if self.post_task:
-                self.post_task(rv)
-
-            return rv
-
-    def generate_dict(self, only=None, exclude=None):
-        """Generate a report as a Python dictionary."""
-
-        return {
+        self._mutable_report = {
             'meta': self.meta,
             'results': self.read(only=only, exclude=exclude) or []
         }
+        self.close()
+
+        if self.post_task:
+            self.post_task(self._mutable_report)
+
+        handler = getattr(self, 'generate_{0}'.format(output))
+        return handler(only=only, exclude=exclude)
+
+    def generate_dict(self, only=None, exclude=None):
+        """Generate a report as a Python dictionary."""
+        return self._mutable_report
 
     def generate_txt(self, only=None, exclude=None):
         """Generate a report as plain text, using an ASCII table for data."""
